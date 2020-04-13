@@ -153,10 +153,13 @@ server:
 
   # extraSecretEnvironmentVars is a list of extra enviroment variables to set with the stateful set.
   # These variables take value from existing Secret objects.
-  extraSecretEnvironmentVars: []
-    # - envName: AWS_SECRET_ACCESS_KEY
-    #   secretName: vault
-    #   secretKey: AWS_SECRET_ACCESS_KEY
+  extraSecretEnvironmentVars: 
+  - envName: AWS_SECRET_ACCESS_KEY
+    secretName: dynamodb-access-secret-key
+    secretKey: AWS_SECRET_ACCESS_KEY
+  - envName: AWS_ACCESS_KEY_ID
+    secretName: dynamodb-access-secret-key
+    secretKey: AWS_ACCESS_KEY_ID
 
   # extraVolumes is a list of extra volumes to mount. These will be exposed
   # to Vault in the path `/vault/userconfig/<name>/`. The value below is
@@ -348,7 +351,7 @@ server:
         access_key  = "<your_access_key>"
         secret_key  = "<your_secret_key>"
         kms_key_id  = "<kms_key_id>"
-        
+
       }
 
       # Example configuration for using auto-unseal, using Google Cloud KMS. The

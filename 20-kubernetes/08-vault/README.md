@@ -112,7 +112,7 @@ Check out [DynamoDB Storage Backend](https://www.vaultproject.io/docs/configurat
 Add your aws access and secret key as a kubernetes secret
 
 ```bash
-create secret generic dynamodb_access_secret_keys \
+kubectl create secret generic dynamodb-access-secret-keys \
 --from-literal=AWS_ACCESS_KEY_ID=<YOUR_AWS_ACCCESS_KEY> \
 --from-literal=AWS_SECRET_ACCESS_KEY=<YOUR_AWS_ACCCESS_KEY_SECRET>
 ```
@@ -124,10 +124,10 @@ Kubernetes can provide the secrets as environment variables which Vault can use 
   # These variables take value from existing Secret objects.
   extraSecretEnvironmentVars:
   - envName: AWS_SECRET_ACCESS_KEY
-    secretName: dynamodb_access_secret_keys
+    secretName: dynamodb-access-secret-keys
     secretKey: AWS_SECRET_ACCESS_KEY
   - envName: AWS_ACCESS_KEY_ID
-    secretName: dynamodb_access_secret_keys
+    secretName: dynamodb-access-secret-keys
     secretKey: AWS_ACCESS_KEY_ID
 ```
 
@@ -156,8 +156,8 @@ Vault can retrieve the AWS KMS Key ID via environment varaiable so it is not acc
 Add the KMS Key as a kubernetes secret.
 
 ```bash
-create secret generic aws_kms_key_id \
---from-literal=KMS_KEY_ID=<Your_KMS_KEY_ID> \
+kubectl create secret generic aws-kms-key-id \
+--from-literal=KMS_KEY_ID=<your_key_id>	 \
 ```
 Reference the kubernetes secret in the values.yaml
 
@@ -166,7 +166,7 @@ Reference the kubernetes secret in the values.yaml
   # These variables take value from existing Secret objects.
   extraSecretEnvironmentVars:
   - envName: VAULT_AWSKMS_SEAL_KEY_ID
-    secretName: aws_kms_key_id
+    secretName: aws-kms-key-id
     secretKey: KMS_KEY_ID
 ```
 
