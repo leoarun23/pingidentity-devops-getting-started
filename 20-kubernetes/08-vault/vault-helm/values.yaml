@@ -160,6 +160,9 @@ server:
   - envName: AWS_ACCESS_KEY_ID
     secretName: dynamodb-access-secret-key
     secretKey: AWS_ACCESS_KEY_ID
+  - envName: VAULT_AWSKMS_SEAL_KEY_ID
+    secretName: aws-kms-key-id
+    secretKey: KMS_KEY_ID  
 
   # extraVolumes is a list of extra volumes to mount. These will be exposed
   # to Vault in the path `/vault/userconfig/<name>/`. The value below is
@@ -342,12 +345,12 @@ server:
       }
       storage "dynamodb" {
         ha_enabled = "true"
-        region = "ca-central-1"
-        table = "devops_gsa_vault_data"     
+        region = "<your_aws_region>"
+        table = "<your_table_name>"     
       }
 
       seal "awskms" {
-        region      = "ca-central-1"
+        region      = "<your_aws_region>"
         access_key  = "<your_access_key>"
         secret_key  = "<your_secret_key>"
         kms_key_id  = "<kms_key_id>"
