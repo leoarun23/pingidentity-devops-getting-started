@@ -124,10 +124,10 @@ Kubernetes can provide the secrets as environment variables which Vault can use 
   # These variables take value from existing Secret objects.
   extraSecretEnvironmentVars:
   - envName: AWS_SECRET_ACCESS_KEY
-    secretName: dynamodb-access-secret-keys
+    secretName: dynamodb-access-secret-key
     secretKey: AWS_SECRET_ACCESS_KEY
   - envName: AWS_ACCESS_KEY_ID
-    secretName: dynamodb-access-secret-keys
+    secretName: dynamodb-access-secret-key
     secretKey: AWS_ACCESS_KEY_ID
 ```
 
@@ -207,6 +207,31 @@ Your release is named vault. To learn more about the release, try:
   $ helm get vault
  ```
 
+### Initialize the Vault
+
+If this is the first time you deployed vault in your environment you will need to initialize the vault.
+
+```bash
+kubectl exec vault-0 -- vault operator init
+```
+
+If the initialization is successful, you should see some recovery keys and Initial Root token. Make sure you store those recovery keys somewhere secure and might as well for the root token.
+
+```bash
+Recovery Key 1: <key_1>
+Recovery Key 2: <key_2>
+Recovery Key 3: <key_3>
+Recovery Key 4: <key_4>
+Recovery Key 5: <key_5>
+
+Initial Root Token: <root_token>
+
+Success! Vault is initialized
+
+Recovery key initialized with 5 key shares and a key threshold of 3. Please
+securely distribute the key shares printed above.
+```
+
 ### Pod Authentication
 
 In order for Ping Identity products and applications to take advantage of Vault, they must have a Vault client token to successully authenticate to Vault. For applications deployed in a kubernetes environment, we can use Vault's kubernetes auth method.
@@ -253,7 +278,59 @@ export SA_TOKEN=$(kubectl get secret $SA_SECRET_NAME -o jsonpath="{.data['token'
 
 ##### Add Vault Policies
 
-TODO: Add the steps
+Add the pingfederate.hcl, pingaccess.hcl, and pingcentral.hcl policies to ensure the apps/products only have access to their secrets and keys.
+
+There are 3 methods to add the policies to your Vault.
+
+
+CLI: Note, you will need to attach to a vault pod.
+```bash
+vault policy write <namespace>-<env>-pingfederate -<<
+# Enable transit secrets engine
+path "sys/mounts/transit" {
+  capabilities = [ "read", "update", "list" ]
+}
+
+# To read enabled secrets engines
+path "sys/mounts" {
+  capabilities = [ "create", "read", "update", "delete" ]
+}
+
+# Manage the keys transit keys endpoint
+path "transit/keys/<namespace>-<env>-<product_name>" {
+  capabilities = [ "create", "read", "update", "list" ]
+}
+
+# Manage the keys transit keys endpoint
+path "transit/encrypt/<namespace>-<env>-<product_name>" {
+  capabilities = [ "create", "read", "update", "list" ]
+}
+
+# Manage the keys transit keys endpoint
+path "transit/decrypt/<namespace>-<env>-<product_name>" {
+  capabilities = [ "create", "read", "update", "list" ]
+}
+
+#Manage the cubbyhole secrets engine
+path "cubbyhole/<path_to_masterkey>" {
+  capabilities = [ "create", "read", "update", "list" ]
+}
+EOF
+```
+API: Note, your client should be able to access the vault API endpoint.  
+```bash
+curl \
+    --header "X-Vault-Token: ..." \
+    --request PUT \
+    --data @pingfederate-policy.hcl \
+    http://127.0.0.1:8200/v1/sys/policy/<namespace>-<env>-pingfederate
+```
+
+Vault UI:
+
+
+
+Remember to add the additional policies for PingAccess and PingCentral.
 
 ##### Configure Kubernetes Auth
 
