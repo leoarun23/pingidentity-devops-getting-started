@@ -247,17 +247,12 @@ First, lets attach to our namespace where the Hashicorp vault will be deployed.
 ```bash
 kubens ping-cloud-devops-eks-vault
 ```
-
-Add a service account that will be deployed to all pods. Note, you can use the default service account, but for best practices sake, lets create a new one called `vault-auth`.
-
-```bash
-kubectl create serviceaccount vault-auth 
-```
+The vault's cluster role binding creates a service account `vault` to perform delegated authentication and authorization checks. This service account is used by the kubernetes authentication mechanism to allow authentication by other applications.
 
 Lets retrieve the service account secret name and set an environment variable: `SA_SECRET_NAME`. 
 
 ```bash
-export SA_SECRET_NAME=export SA_SECRET_NAME=$(kubectl get serviceaccounts vault-auth -o jsonpath="{.secrets[].name}")
+export SA_SECRET_NAME=$(kubectl get serviceaccounts vault -o jsonpath="{.secrets[].name}")
 ```
 
 Save the service account CA certificate, kubernetes cluster API hostname, and the service account token to environment variables. These variable values will be used in the kerberos auth method configuration.
@@ -335,6 +330,7 @@ Vault UI:
 
 
 Remember to add the additional policies for PingAccess and PingCentral.
+
 
 ##### Configure Kubernetes Auth
 
