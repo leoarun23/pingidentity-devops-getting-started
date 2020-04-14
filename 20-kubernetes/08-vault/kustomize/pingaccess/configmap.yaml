@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  PING_IDENTITY_ACCEPT_EULA: "YES"
+  SERVER_PROFILE_PATH: 20-kubernetes/08-vault/server-profiles/pingaccess
+  SERVER_PROFILE_URL: https://www.github.com/pingidentity/pingidentity-devops-getting-started.git
+  SERVER_PROFILE_BRANCH: vault-dev
+kind: ConfigMap
+metadata:
+  labels:
+    role: pingaccess
+  name: pingaccess-environment-variables
