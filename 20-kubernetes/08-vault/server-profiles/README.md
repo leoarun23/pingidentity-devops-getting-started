@@ -2,9 +2,9 @@
 
 The server profiles used in this example are based off the standalone profiles and do not contain additional configuration items beyond supporting Vault. The vault master key package requires 3 files:
 
-vault.config.properties
-VaultMasterKeyEncryptor.jar
-vault-java-driver-5.1.0.jar
+- vault.config.properties
+- VaultMasterKeyEncryptor.jar
+- vault-java-driver-5.1.0.jar
 
 Each of the above files are deployed in specific places for each product. The location is specified in the product's sample server-profile for this repo.
 
