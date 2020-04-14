@@ -280,7 +280,11 @@ export SA_TOKEN=$(kubectl get secret $SA_SECRET_NAME -o jsonpath="{.data['token'
 
 Add the pingfederate.hcl, pingaccess.hcl, and pingcentral.hcl policies to ensure the apps/products only have access to their secrets and keys.
 
-There are 3 methods to add the policies to your Vault.
+There are 3 methods to add the policies to your Vault. Be sure to update the <namespace> and <env> tags in your policy files with the appropiate values. The recommended values for <namespace> is your k8s namespace and <env> : dev, staging, prod, etc
+
+Example: 
+  <namespace> : ping-cloud-eks-bob
+  <env> : dev
 
 
 CLI: Note, you will need to attach to a vault pod.
@@ -297,22 +301,22 @@ path "sys/mounts" {
 }
 
 # Manage the keys transit keys endpoint
-path "transit/keys/<namespace>-<env>-<product_name>" {
+path "transit/keys/<namespace>-<environment>-pingfederate" {
   capabilities = [ "create", "read", "update", "list" ]
 }
 
 # Manage the keys transit keys endpoint
-path "transit/encrypt/<namespace>-<env>-<product_name>" {
+path "transit/encrypt/<namespace>-<environment>-pingfederate" {
   capabilities = [ "create", "read", "update", "list" ]
 }
 
 # Manage the keys transit keys endpoint
-path "transit/decrypt/<namespace>-<env>-<product_name>" {
+path "transit/decrypt/<namespace>-<environment>-pingfederate" {
   capabilities = [ "create", "read", "update", "list" ]
 }
 
 #Manage the cubbyhole secrets engine
-path "cubbyhole/<path_to_masterkey>" {
+path "cubbyhole/<namespace>/<env>/pingfederate/masterkey" {
   capabilities = [ "create", "read", "update", "list" ]
 }
 EOF
@@ -373,8 +377,10 @@ kubectl exec vault-0 -- vault write auth/kubernetes/role/<namespace>-<environmen
         policies=<policy> 
 ```
 
-### Vault Secret Engines
+##### Transit Secret Engine
 
-##### Transit
+The Transit secret engine uses a Vault managed key to support encryption and decryption of the product's (PingFederate, PingAccess, and PingCentral) master key. Each product implements a common interface (MasterKeyEncryptor) that will encrypt the masterkey while at rest.
 
-##### CubbyHole
+##### CubbyHole Secret Engine
+
+The CubbyHole secret engine is used to store the master key for each product. This is to assist backups and restoration. In addition could be used to assist with migrating configs from one environment to another (Example: Development to Staging). 
