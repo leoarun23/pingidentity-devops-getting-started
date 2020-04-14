@@ -3,6 +3,6 @@
     <!--Uncomment the below attribute to use an external key for encryption of PF Master Key.
 
         <con:item name="keyId"> put the key Id here </con:item>-->
-    <con:item name="keyId">cleggett_dev_pingfederate_master</con:item>
+    <con:item name="keyId">ping-cloud-devops-eks-junk-dev-pingfederate</con:item>
     <con:item name="jwkEncrypted">true</con:item>
 </con:config>
