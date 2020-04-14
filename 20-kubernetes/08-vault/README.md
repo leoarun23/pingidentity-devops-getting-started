@@ -6,6 +6,8 @@ To help demostrate integration with Hashicorp Vault, you can clone Hashicrop's V
 
 Below are the specific configuration items we are using for our demostration deployment. In addition, we will be deploying Vault into Amazon Elastic Kubernetes Service (EKS) and using some of AWS's specific services (AWS KMS and AWS DynamoDB) to help simplify the deployment architecture. 
 
+![PingIdentity Vault in K8s](images/ping-vault-k8s.png)
+
 ### Prerequisites
 
 - [Helm](https://helm.sh/docs/intro/install/) - Hashicorp Vault uses Helm 3.
@@ -97,8 +99,6 @@ Since we are using AWS for our deployment, we can take advantage of various AWS 
 
 ##### AWS DynamoDB
 
----> Diagram
-
 Create an AWS access key and secret with permissions to manage the dynamodb. 
 
 Note: If the table does not exist in dynamodb, Vault will create the table for you. 
@@ -177,8 +177,6 @@ Add a seal element to the config map of your Vault deployment (standalone | ha).
         region      = "<aws_region>"
       }
 ```
-
----> Diagram 
 
 ### Install Vault Helm Chart
 
@@ -327,7 +325,7 @@ curl \
 
 Vault UI:
 
-
+![Vault UI](images/vault-ui.png)
 
 Remember to add the additional policies for PingAccess and PingCentral.
 
